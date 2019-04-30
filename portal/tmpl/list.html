@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/statics/ionicons/css/w3.css">
+    <link rel="stylesheet" href="/statics/ionicons/css/ionicons.min.css">
+    <title>Twiq</title>
+    <style>
+        .hoverbtn:hover {
+            font-weight: bold;
+            opacity: 0.4;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="w3-row-padding">
+    <div class="w3-card-2 w3-margin-top">
+        <header class="w3-container w3-center w3-teal">
+            <div class="w3-row">
+                <div class="w3-half">
+                    <h3 class="w3-right">Listing Posts</h3>
+                </div>
+                <div class="w3-half w3-text-right">
+                    <div class="w3-right">
+                        <a href="#" onclick="document.getElementById('create-form').style.display='block'">
+                            <i class="icon ion-ios-plus-outline w3-xxlarge hoverbtn"></i>
+                        </a>
+                        <a href="/logout">
+                            <i class="icon ion-log-out w3-xxlarge hoverbtn"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <table class="w3-table w3-centered w3-border w3-bordered w3-hoverable"  >
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Src</th>
+                <th>DpSrc</th>
+                <th>Url</th>
+                <th>CardType</th>
+                <th>ButtonText</th>
+                <th>MascotId</th>
+            </tr>
+            </thead>
+            <tbody>
+           
+            {{range .}}
+            <tr>
+                <td>{{.Id.Hex}}</td>
+                <td>{{.Title}}</td>
+                <td>{{.Description}}</td>
+                <td>{{.Src}}</td>
+                <td>{{.DpSrc}}</td>
+                <td>{{.Url}}</td>
+                <td>{{.CardType}}</td>
+                <td>{{.ButtonText}}</td>
+                
+                <td>
+                <select w3-container id="{{.Id.Hex}}-mascotId">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+                </td>
+                <td>
+                    <button class="w3-btn w3-teal" data-id="{{.Id.Hex}}"  onclick="postlink(this);">PostLink</button>
+                    
+                    <button class="w3-btn w3-red" data-id="{{.Id.Hex}}" onclick="deletePost(this)">Delete</button>
+                </td>
+            </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create Modals -->
+<div class="w3-container">
+    <div id="create-form" class="w3-modal">
+        <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width: 600px;">
+            <!-- head -->
+            <div class="w3-container w3-teal">
+                <h2>Create new Post</h2>
+                <span class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright"
+                      onclick="document.getElementById('create-form').style.display='none'">&times;</span>
+            </div>
+
+            <form class="w3-container" action="/create" method="post" enctype="multipart/form-data">
+                
+                <label class="w3-label">Title</label>
+                <input class="w3-input" type="text" name="Title" value="" >
+                <label class="w3-label">Description</label>
+                <input class="w3-input" type="text" name="Description" value="">
+                <label class="w3-label">Src</label>
+                <input class="w3-input" type="file" name="image" value="" >
+                <label class="w3-label">DpSrc</label>
+                <input class="w3-input" type="text" name="DpSrc" value="">
+                <label class="w3-label">Url</label>
+                <input class="w3-input" type="text" name="Url" value="" >
+                <label class="w3-label">CardType</label>
+                <input class="w3-input" type="text" name="CardType" value="">
+                <label class="w3-label">ButtonText</label>
+                <input class="w3-input" type="text" name="ButtonText" value="" > 
+                <button class="w3-btn w3-teal w3-margin-top w3-margin-bottom w3-right" type="submit">Create</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- PostLink Modals -->
+<div class="w3-container">
+    <div id="postlink-form" class="w3-modal">
+        <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width: 600px;">
+            <!-- head -->
+            <div class="w3-container w3-teal">
+                <h2>Are you sure?</h2>
+                <span class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright"
+                      onclick="document.getElementById('postlink-form').style.display='none'">&times;</span>
+            </div>
+
+            <form class="w3-container" action="/postlink" method="post">
+                <input type="hidden" name="PostId" id="PostId3">
+                <input type="hidden" name="MascotId" id="MascotId">
+                <div class="w3-center">
+                    <button class="w3-btn w3-red w3-margin-top w3-margin-bottom" type="submit">PostLink</button>
+                    <button type="button" class="w3-btn w3-teal w3-margin-top w3-margin-bottom"
+                            onclick="document.getElementById('postlink-form').style.display='none'">Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Delete Modals -->
+<div class="w3-container">
+    <div id="delete-form" class="w3-modal">
+        <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width: 600px;">
+            <!-- head -->
+            <div class="w3-container w3-teal">
+                <h2>Are you sure?</h2>
+                <span class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright"
+                      onclick="document.getElementById('delete-form').style.display='none'">&times;</span>
+            </div>
+
+            <form class="w3-container" action="/delete" method="post">
+                <input type="hidden" name="PostId" id="PostId2">
+                <div class="w3-center">
+                    <button class="w3-btn w3-red w3-margin-top w3-margin-bottom" type="submit">Delete</button>
+                    <button type="button" class="w3-btn w3-teal w3-margin-top w3-margin-bottom"
+                            onclick="document.getElementById('delete-form').style.display='none'">Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+  function postlink(e) {
+    var postlinkForm = document.getElementById('postlink-form');
+    postlinkForm.style.display = 'block';
+    console.log(e)
+    document.getElementById('PostId3').value = e.getAttribute("data-id");
+    console.log("id is this", e.getAttribute("data-id"))
+    document.getElementById('MascotId').value = document.getElementById(e.getAttribute("data-id")+"-mascotId").value
+    console.log("Mascot Id ",document.getElementById('MascotId').value)
+}
+
+  function deletePost(e) {
+    var deleteForm = document.getElementById('delete-form');
+    deleteForm.style.display = 'block';
+    console.log(e)
+    document.getElementById('PostId2').value = e.getAttribute("data-id");
+    console.log("id is this", e.getAttribute("data-id"))
+  }
+</script>
+</body>
+</html>

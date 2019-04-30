@@ -1,0 +1,12 @@
+db/
+*.swp
+.git/objects/
+bin/*
+main
+.DS_Store
+mock
+nohup.*
+postcreator
+.creds*
+.aws*
+portal/uploads/*
